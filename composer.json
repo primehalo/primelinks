@@ -1,10 +1,10 @@
 {
     "name": "primehalo/primelinks",
     "type": "phpbb-extension",
-    "description": "Modifies links within posts so that local links are correctly classified as such. It can also apply a target to external links (e.g. to open in a new window) and prepend links (e.g. to apply an anonymizer).",
+    "description": "Modifies the attributes of links within posts (and/or private messages) based on whether the links are internal or external. This allows setting different classes so internal and external links look different, setting a target so links open in a new window, setting a nofollow, prefixing URLs such as to add an anonymizer or monetizer, and more.",
     "homepage": "",
-    "version": "1.1.0 BETA 3",
-    "time": "2018-02-11",
+    "version": "1.1.0",
+    "time": "2018-02-12",
     "license": "GPL-2.0",
     "authors": [
         {

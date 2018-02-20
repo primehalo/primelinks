@@ -1,5 +1,9 @@
 # Prime Links
 
+## Synopsis
+
+A phpBB 3.1/3.2 extension that modifies the attributes of links within posts (and/or private messages) based on whether the links are internal or external. This allows setting different classes so internal and external links look different, setting a target so links open in a new window, setting a nofollow, prefixing URLs such as to add an anonymizer or monetizer, and more.
+
 ## Installation
 
 1. Download the ZIP file.
