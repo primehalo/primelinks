@@ -2,9 +2,9 @@
     "name": "primehalo/primelinks",
     "type": "phpbb-extension",
     "description": "Modifies the attributes of links within posts (and/or private messages) based on whether the links are internal or external. This allows setting different classes so internal and external links look different, setting a target so links open in a new window, setting a nofollow, prefixing URLs such as to add an anonymizer or monetizer, and more.",
-    "homepage": "",
-    "version": "1.1.0",
-    "time": "2018-02-12",
+    "homepage": "https://github.com/primehalo/primelinks",
+    "version": "1.1.1",
+    "time": "2018-04-20",
     "license": "GPL-2.0",
     "authors": [
         {
@@ -22,6 +22,12 @@
         "display-name": "Prime Links",
         "soft-require": {
             "phpbb/phpbb": ">=3.1.7"
-        }
+        },
+		"version-check": {
+		    "host": "www.absoluteanime.com",
+			"directory": "/_phpbb-extensions_/versioncheck",
+			"filename": "primelinks.json",
+			"ssl": true
+		}
     }
 }
