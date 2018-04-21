@@ -50,9 +50,6 @@ class main_listener implements EventSubscriberInterface
 	/** @var string phpBB domain host */
 	protected $board_host;
 
-	/** @var array settings for this extension */
-	protected $settings;
-
 	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\config $config)
 	{
 		$this->template	= $template;

@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2018-04-21
+### Added
+- Added IDs to some form elements to match the *for* attribute values
+
+### Changed
+- Quoted the service arguments in config/services.yml
+
+### Fixed
+- Corrected some *for* attribute values that were associated with the wrong form elements
+
+### Removed
+- Removed the unused property $settings from event/main_listener.php
+
 ## [1.1.1] - 2018-04-20
 ### Added
 - Version checking
