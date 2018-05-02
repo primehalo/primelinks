@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2018-05-02
+### Added
+- Added formal Spanish (es) and casual Spanish (es_x_tu) translations, thanks to Raul [ThE KuKa]
+
 ## [1.1.2] - 2018-04-21
 ### Added
 - Added IDs to some form elements to match the *for* attribute values
@@ -50,4 +54,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A module to the ACP for setting options. Options are configured through this ACP module and stored in the database rather than being set directly in a PHP file.
 
 ## [1.0.0] - 2015-01-22
-- First release for phpBB 3.1, ported from the Prime Links extension for phpBB 3.0.
+- First release for phpBB 3.1, ported from the Prime Links MOD for phpBB 3.0.
