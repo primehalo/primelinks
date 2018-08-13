@@ -37,6 +37,7 @@ class install_acp_module extends \phpbb\db\migration\migration
 			'primelinks_inlink_regex'		=> '',
 			'primelinks_exlink_regex'		=> '',
 			'primelinks_skip_prefix_regex'	=> '',
+			'primelinks_inlink_use_titles'	=> '',
 		);
 	}
 

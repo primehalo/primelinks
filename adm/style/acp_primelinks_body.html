@@ -45,6 +45,11 @@
 			<dt><label for="primelinks_inlink_domains">{L_ACP_PRIMELINKS_INLINK_DOMAINS}{L_COLON}</label><br /><span>{L_ACP_PRIMELINKS_INLINK_DOMAINS_EXPLAIN}</span></dt>
 			<dd><input type="text" class="input" maxlength="255" name="primelinks_inlink_domains" value="{PRIMELINKS_INLINK_DOMAINS}" id="primelinks_inlink_domains" /> {L_ACP_PRIMELINKS_EXAMPLE}{L_ACP_PRIMELINKS_INLINK_DOMAINS_EXAMPLE}</dd>
 		</dl>
+		<dl>
+			<dt><label for="primelinks_inlink_use_titles">{L_ACP_PRIMELINKS_INLINK_USE_TITLES}{L_COLON}</label><br /><span>{L_ACP_PRIMELINKS_INLINK_USE_TITLES_EXPLAIN}</span></dt>
+			<dd><input type="radio" class="radio" name="primelinks_inlink_use_titles" value="1" <!-- IF PRIMELINKS_INLINK_USE_TITLES == 1 -->checked="checked" <!-- ENDIF -->id="primelinks_inlink_use_titles" /> {L_YES} &nbsp;
+				<input type="radio" class="radio" name="primelinks_inlink_use_titles" value="0" <!-- IF PRIMELINKS_INLINK_USE_TITLES == 0 -->checked="checked" <!-- ENDIF -->/> {L_NO}</dd>
+		</dl>
 	</fieldset>
 
 	<fieldset>

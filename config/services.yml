@@ -2,8 +2,10 @@ services:
     primehalo.primelinks.listener:
         class: primehalo\primelinks\event\main_listener
         arguments:
+            - '@config'
+            - '@dbal.conn'
             - '@template'
             - '@user'
-            - '@config'
+            - '%core.php_ext%'
         tags:
             - { name: event.listener }

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [in progress]
+### [1.1.4] - 2018-08-13
+### Added
+- A new option to display the post subject, topic title, or forum name instead of the URL for local links to posts, topics, and forums
+
+### Changed
+- Updated to work with PHP 7.0.12 by changing a couple preg_replace statements with preg_replace_callback statements
+
 ## [1.1.3] - 2018-05-02
 ### Added
 - Added formal Spanish (es) and casual Spanish (es_x_tu) translations, thanks to Raul [ThE KuKa]
