@@ -21,7 +21,12 @@ class main_module
 
 	public function main($id, $mode)
 	{
-		global $config, $phpbb_container, $request, $template, $user;
+		global $phpbb_container;
+
+		$config = $phpbb_container->get('config');
+		$request = $phpbb_container->get('request');
+		$template = $phpbb_container->get('template');
+		$user = $phpbb_container->get('user');
 
 		$this->tpl_name = 'acp_primelinks_body';
 		$this->page_title = $user->lang('ACP_PRIMELINKS_TITLE');
@@ -55,10 +60,10 @@ class main_module
 			$config->set('primelinks_exlink_class', $request->variable('primelinks_exlink_class', ''));
 			$config->set('primelinks_inlink_prefix', $request->variable('primelinks_inlink_prefix', ''));
 			$config->set('primelinks_exlink_prefix', $request->variable('primelinks_exlink_prefix', ''));
-			$config->set('primelinks_skip_regex', $request->variable('primelinks_skip_regex', ''));
-			$config->set('primelinks_inlink_regex', $request->variable('primelinks_inlink_regex', ''));
-			$config->set('primelinks_exlink_regex', $request->variable('primelinks_exlink_regex', ''));
-			$config->set('primelinks_skip_prefix_regex', $request->variable('primelinks_skip_prefix_regex', ''));
+			$config->set('primelinks_skip_regex', htmlspecialchars_decode($request->variable('primelinks_skip_regex', ''), ENT_COMPAT));
+			$config->set('primelinks_inlink_regex', htmlspecialchars_decode($request->variable('primelinks_inlink_regex', ''), ENT_COMPAT));
+			$config->set('primelinks_exlink_regex', htmlspecialchars_decode($request->variable('primelinks_exlink_regex', ''), ENT_COMPAT));
+			$config->set('primelinks_skip_prefix_regex', htmlspecialchars_decode($request->variable('primelinks_skip_prefix_regex', ''), ENT_COMPAT));
 			$config->set('primelinks_inlink_use_titles', $request->variable('primelinks_inlink_use_titles', false));
 
 			$log = $phpbb_container->get('log');
