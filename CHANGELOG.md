@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2019-07-23
+### Fixed
+- The warning "strpos(): Empty needle" would occur with empty links ([url][/url]) when the "Show titles instead of URLs" option was enabled
+
 ## [1.1.5] - 2019-01-25
 ### Fixed
 - All ampersands ("&") used in any of the fields for regular expressions would get converted to "&amp;" before being stored into the database. If any of your regular expressions contain ampersands you will have to go to the Prime Links Settings admin page and submit the form so that they get saved in the database correctly.
