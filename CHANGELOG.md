@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.7] - 2020-04-21
+### Changed
+- Typecast a few variables used in SQL statements to prevent SQL injection attacks (these variables were already vetted so there was no existing risk)
+- Converted some leading spaces to tabs in composer.json
+- Updated the README.md file to indicate phpBB 3.3 was supported
+
 ## [1.1.6] - 2019-07-23
 ### Fixed
 - The warning "strpos(): Empty needle" would occur with empty links ([url][/url]) when the "Show titles instead of URLs" option was enabled

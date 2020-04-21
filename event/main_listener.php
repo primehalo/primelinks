@@ -492,7 +492,7 @@ class main_listener implements EventSubscriberInterface
 					{
 						$post_id = (int)$matches[1];
 						if (!isset($this->post_cache[$post_id])) {
-							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . $post_id;
+							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int)$post_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -508,7 +508,7 @@ class main_listener implements EventSubscriberInterface
 					{
 						$topic_id = (int)$matches[1];
 						if (!isset($this->topic_cache[$topic_id])) {
-							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . $topic_id;
+							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$topic_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -527,7 +527,7 @@ class main_listener implements EventSubscriberInterface
 					{
 						$forum_id = (int)$matches[1];
 						if (!isset($this->forum_cache[$forum_id])) {
-							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . $forum_id;
+							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$forum_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
