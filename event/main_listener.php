@@ -507,7 +507,7 @@ class main_listener implements EventSubscriberInterface
 					}
 					else if (preg_match('/t=([1-9][0-9]*)/', $href, $matches))
 					{
-						$topic_id = (int)$matches[1];
+						$topic_id = (int) $matches[1];
 						if (!isset($this->topic_cache[$topic_id]))
 						{
 							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int) $topic_id;
@@ -527,7 +527,7 @@ class main_listener implements EventSubscriberInterface
 				{
 					if (preg_match('/[?&]f=([1-9][0-9]*)(?:&|$)/', $href, $matches))
 					{
-						$forum_id = (int)$matches[1];
+						$forum_id = (int) $matches[1];
 						if (!isset($this->forum_cache[$forum_id]))
 						{
 							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int) $forum_id;
