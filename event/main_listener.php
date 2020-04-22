@@ -245,7 +245,7 @@ class main_listener implements EventSubscriberInterface
 		$url_split = array_reverse(explode('.', $url));
 
 		//$domain_list = is_string($domains) ? explode(';', $domains) : $domains;
-		$domain_list = is_string($domains) ? preg_split('/[\s,;]/', $domains, NULL, PREG_SPLIT_NO_EMPTY) : $domains;
+		$domain_list = is_string($domains) ? preg_split('/[\s,;]/', $domains, null, PREG_SPLIT_NO_EMPTY) : $domains;
 		foreach ($domain_list as $domain)
 		{
 			$domain = $this->extract_host($domain);
@@ -490,9 +490,10 @@ class main_listener implements EventSubscriberInterface
 				{
 					if (preg_match('/[?&]p=([1-9][0-9]*)(?:&|$)/', $href, $matches))
 					{
-						$post_id = (int)$matches[1];
-						if (!isset($this->post_cache[$post_id])) {
-							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int)$post_id;
+						$post_id = (int) $matches[1];
+						if (!isset($this->post_cache[$post_id]))
+						{
+							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int) $post_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -507,8 +508,9 @@ class main_listener implements EventSubscriberInterface
 					else if (preg_match('/t=([1-9][0-9]*)/', $href, $matches))
 					{
 						$topic_id = (int)$matches[1];
-						if (!isset($this->topic_cache[$topic_id])) {
-							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$topic_id;
+						if (!isset($this->topic_cache[$topic_id]))
+						{
+							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int) $topic_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -526,8 +528,9 @@ class main_listener implements EventSubscriberInterface
 					if (preg_match('/[?&]f=([1-9][0-9]*)(?:&|$)/', $href, $matches))
 					{
 						$forum_id = (int)$matches[1];
-						if (!isset($this->forum_cache[$forum_id])) {
-							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$forum_id;
+						if (!isset($this->forum_cache[$forum_id]))
+						{
+							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int) $forum_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
