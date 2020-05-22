@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.8] - 2020-05-22
+### Fixed
+- It was possible that relative links to posts, topics, and forums would not show their associated titles as expected when "show titles instead of URLs" was enabled
+
 ## [1.1.7] - 2020-04-21
 ### Changed
 - Typecast a few variables used in SQL statements to prevent SQL injection attacks (these variables were already vetted so there was no existing risk)

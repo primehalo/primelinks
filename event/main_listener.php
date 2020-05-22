@@ -484,9 +484,9 @@ class main_listener implements EventSubscriberInterface
 
 			// Check to see if we should replace a local topic/post link text with the topic/post title instead
 			$board_path = !isset($board_path) ? generate_board_url() : $board_path;
-			if ($this->config['primelinks_inlink_use_titles'] && $is_local && empty($removed) && !empty($linkbd['text']) &&  strpos($href, str_replace('&amp;', '&', $linkbd['text'])) !== false) // Link is local and still exists and the link text contains a segment of the link URL
+			if ($this->config['primelinks_inlink_use_titles'] && $is_local && empty($removed) && !empty($linkbd['text']) && strpos($href, str_replace('&amp;', '&', $linkbd['text'])) !== false) // Link is local and still exists and the link text contains a segment of the link URL
 			{
-				if (strpos($href, "{$board_path}/viewtopic.{$this->php_ext}") !== false)
+				if (strpos($href, "{$board_path}/viewtopic.{$this->php_ext}") !== false || strpos($href, "./viewtopic.{$this->php_ext}") === 0 || strpos($href, "viewtopic.{$this->php_ext}") === 0)
 				{
 					if (preg_match('/[?&]p=([1-9][0-9]*)(?:&|$)/', $href, $matches))
 					{
@@ -523,7 +523,7 @@ class main_listener implements EventSubscriberInterface
 						}
 					}
 				}
-				else if (strpos($href, "{$board_path}/viewforum.{$this->php_ext}") !== false)
+				else if (strpos($href, "{$board_path}/viewforum.{$this->php_ext}") !== false || strpos($href, "./viewforum.{$this->php_ext}") === 0 || strpos($href, "viewforum.{$this->php_ext}") === 0)
 				{
 					if (preg_match('/[?&]f=([1-9][0-9]*)(?:&|$)/', $href, $matches))
 					{
