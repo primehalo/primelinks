@@ -495,10 +495,10 @@ class main_listener implements EventSubscriberInterface
 					parse_str(parse_url($href, PHP_URL_QUERY), $url_params);
 					if (!empty($url_params['p']))
 					{
-						$post_id = (int)$url_params['p'];
+						$post_id = (int) $url_params['p'];
 						if (!isset($this->post_cache[$post_id]))
 						{
-							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int)$post_id;
+							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int) $post_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -512,10 +512,10 @@ class main_listener implements EventSubscriberInterface
 					}
 					else if (!empty($url_params['t']))
 					{
-						$topic_id = (int)$url_params['t'];
+						$topic_id = (int) $url_params['t'];
 						if (!isset($this->topic_cache[$topic_id]))
 						{
-							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$topic_id;
+							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int) $topic_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -533,10 +533,10 @@ class main_listener implements EventSubscriberInterface
 					parse_str(parse_url($href, PHP_URL_QUERY), $url_params);
 					if (!empty($url_params['f']))
 					{
-						$forum_id = (int)$url_params['f'];
+						$forum_id = (int) $url_params['f'];
 						if (!isset($this->forum_cache[$forum_id]))
 						{
-							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$forum_id;
+							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int) $forum_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
