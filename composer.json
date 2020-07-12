@@ -3,8 +3,8 @@
 	"type": "phpbb-extension",
 	"description": "Modifies the attributes of links within posts (and/or private messages) based on whether the links are internal or external. This allows setting different classes so internal and external links look different, setting a target so links open in a new window, setting a nofollow, prefixing URLs such as to add an anonymizer or monetizer, and more.",
 	"homepage": "https://github.com/primehalo/primelinks",
-	"version": "1.1.8",
-	"time": "2020-05-22",
+	"version": "1.1.9",
+	"time": "2020-07-11",
 	"license": "GPL-2.0-only",
 	"authors": [
 		{

@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.9] - 2020-07-12
+### Added
+- Decode % sequences in URLs prior to doing URL checks
+
+### Changed
+- Encoded HTML entities in regular expressions are no longer decoded prior to being inserted into the database
+- Use parse_str(parse_url()) to access query varaibles instead of parsing them with regular expressions
+- Escape certain template variables for use in Javascript code
+
+### Removed
+- Unused variables
+
 ## [1.1.8] - 2020-05-22
 ### Fixed
 - It was possible that relative links to posts, topics, and forums would not show their associated titles as expected when "show titles instead of URLs" was enabled

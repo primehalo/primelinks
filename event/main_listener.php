@@ -41,8 +41,6 @@ class main_listener implements EventSubscriberInterface
 	protected $topic_cache;	// @var array cached topic titles
 	protected $forum_cache;	// @var array cached forum names
 	protected $site_url;	// @var string phpBB site path (without the path to phpBB)
-	protected $board_url;	// @var string phpBB root path
-	protected $board_host;	// @var string phpBB domain host
 
 	/**
 	* Service Containers
@@ -75,10 +73,6 @@ class main_listener implements EventSubscriberInterface
 		$this->template		= $template;
 		$this->user			= $user;
 		$this->php_ext		= $phpExt;
-
-		$this->site_url		= generate_board_url(true);
-		$this->site_url		= utf8_case_fold_nfc($this->site_url);
-		$this->site_host	= $this->extract_host($this->site_url);
 	}
 
 	static public function getSubscribedEvents()
@@ -243,8 +237,6 @@ class main_listener implements EventSubscriberInterface
 		$url = $this->extract_host($url);
 		$url = utf8_case_fold_nfc($url);
 		$url_split = array_reverse(explode('.', $url));
-
-		//$domain_list = is_string($domains) ? explode(';', $domains) : $domains;
 		$domain_list = is_string($domains) ? preg_split('/[\s,;]/', $domains, null, PREG_SPLIT_NO_EMPTY) : $domains;
 		foreach ($domain_list as $domain)
 		{
@@ -284,6 +276,12 @@ class main_listener implements EventSubscriberInterface
 	private function is_url_local($url)
 	{
 		$url = strtolower($url);
+
+		if (!isset($this->site_url) || !$this->site_url)
+		{
+			$this->site_url = generate_board_url(true);
+			$this->site_url = utf8_case_fold_nfc($this->site_url);
+		}
 
 		// Compare the URLs
 		if (!($is_local = $this->match_domain($url, $this->site_url)))
@@ -364,6 +362,11 @@ class main_listener implements EventSubscriberInterface
 			return($message);
 		}
 
+		$skip_regex			= htmlspecialchars_decode($this->config['primelinks_skip_regex'], ENT_COMPAT);
+		$inlink_regex		= htmlspecialchars_decode($this->config['primelinks_inlink_regex'], ENT_COMPAT);
+		$exlink_regex		= htmlspecialchars_decode($this->config['primelinks_exlink_regex'], ENT_COMPAT);
+		$skip_prefix_regex	= htmlspecialchars_decode($this->config['primelinks_skip_prefix_regex'], ENT_COMPAT);
+
 		$this->user->add_lang_ext('primehalo/primelinks', 'common');
 		preg_match_all('#(<a\s[^>]+?>)(.*?)(</a>)#i', $message, $matches, PREG_SET_ORDER);
 		foreach ($matches as $linkbd)
@@ -385,7 +388,8 @@ class main_listener implements EventSubscriberInterface
 			}
 
 			// Check the link's protocol
-			$href	= $this->decode_entities($href);
+			$href	= $this->decode_entities($href);	// Decode encoded HTML entities
+			$href	= rawurldecode($href);				// Decode % sequences
 			$scheme	= substr($href, 0, strpos($href, ':'));
 			if ($scheme)
 			{
@@ -397,14 +401,14 @@ class main_listener implements EventSubscriberInterface
 			}
 
 			// Check if we should skip this link
-			if ($this->config['primelinks_skip_regex'] && @preg_match($this->config['primelinks_skip_regex'], $href))
+			if ($skip_regex && @preg_match($skip_regex, $href))
 			{
 				continue;
 			}
 
 			$is_local = null;
-			$is_local = ($this->config['primelinks_inlink_regex'] && @preg_match($this->config['primelinks_inlink_regex'], $href)) ? true : $is_local;
-			$is_local = ($this->config['primelinks_exlink_regex'] && @preg_match($this->config['primelinks_exlink_regex'], $href)) ? false : $is_local;
+			$is_local = ($inlink_regex && @preg_match($inlink_regex, $href)) ? true : $is_local;
+			$is_local = ($exlink_regex && @preg_match($exlink_regex, $href)) ? false : $is_local;
 			if ($is_local === null)
 			{
 				if ($this->config['primelinks_forbidden_domains'] && $this->match_domain($href, $this->config['primelinks_forbidden_domains']))
@@ -473,12 +477,12 @@ class main_listener implements EventSubscriberInterface
 			}
 			else if ($is_local && $this->config['primelinks_inlink_prefix'])
 			{
-				$url_prefix = ($this->config['primelinks_skip_prefix_regex'] && @preg_match($this->config['primelinks_skip_prefix_regex'], $href)) ? '' : $this->config['primelinks_inlink_prefix'];
+				$url_prefix = ($skip_prefix_regex && @preg_match($skip_prefix_regex, $href)) ? '' : $this->config['primelinks_inlink_prefix'];
 				$new_link = str_replace('href="', 'href="' . $url_prefix, $new_link);
 			}
 			else if (!$is_local && $this->config['primelinks_exlink_prefix'])
 			{
-				$url_prefix = ($this->config['primelinks_skip_prefix_regex'] && @preg_match($this->config['primelinks_skip_prefix_regex'], $href)) ? '' : $this->config['primelinks_exlink_prefix'];
+				$url_prefix = ($skip_prefix_regex && @preg_match($skip_prefix_regex, $href)) ? '' : $this->config['primelinks_exlink_prefix'];
 				$new_link = str_replace('href="', 'href="' . $url_prefix, $new_link);
 			}
 
@@ -488,12 +492,13 @@ class main_listener implements EventSubscriberInterface
 			{
 				if (strpos($href, "{$board_path}/viewtopic.{$this->php_ext}") !== false || strpos($href, "./viewtopic.{$this->php_ext}") === 0 || strpos($href, "viewtopic.{$this->php_ext}") === 0)
 				{
-					if (preg_match('/[?&]p=([1-9][0-9]*)(?:&|$)/', $href, $matches))
+					parse_str(parse_url($href, PHP_URL_QUERY), $url_params);
+					if (!empty($url_params['p']))
 					{
-						$post_id = (int) $matches[1];
+						$post_id = (int)$url_params['p'];
 						if (!isset($this->post_cache[$post_id]))
 						{
-							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int) $post_id;
+							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int)$post_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -505,12 +510,12 @@ class main_listener implements EventSubscriberInterface
 							$new_link .= $this->post_cache[$post_id] . $linkbd['close'];
 						}
 					}
-					else if (preg_match('/t=([1-9][0-9]*)/', $href, $matches))
+					else if (!empty($url_params['t']))
 					{
-						$topic_id = (int) $matches[1];
+						$topic_id = (int)$url_params['t'];
 						if (!isset($this->topic_cache[$topic_id]))
 						{
-							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int) $topic_id;
+							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int)$topic_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);
@@ -525,12 +530,13 @@ class main_listener implements EventSubscriberInterface
 				}
 				else if (strpos($href, "{$board_path}/viewforum.{$this->php_ext}") !== false || strpos($href, "./viewforum.{$this->php_ext}") === 0 || strpos($href, "viewforum.{$this->php_ext}") === 0)
 				{
-					if (preg_match('/[?&]f=([1-9][0-9]*)(?:&|$)/', $href, $matches))
+					parse_str(parse_url($href, PHP_URL_QUERY), $url_params);
+					if (!empty($url_params['f']))
 					{
-						$forum_id = (int) $matches[1];
+						$forum_id = (int)$url_params['f'];
 						if (!isset($this->forum_cache[$forum_id]))
 						{
-							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int) $forum_id;
+							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int)$forum_id;
 							$result = $this->db->sql_query($sql);
 							$row = $this->db->sql_fetchrow($result);
 							$this->db->sql_freeresult($result);

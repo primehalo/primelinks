@@ -15,10 +15,10 @@
 	for (var i = 0; i < links.length; i++) {
 		var href = links[i].getAttribute('href');
 		if (/^https?:\/\/.+/.test(href)) {
-			{% if PRIME_LINK_TARGET %}links[i].target = '{{ PRIME_LINK_TARGET }}';{% endif %}
-			{% if PRIME_LINK_REL %}links[i].rel = '{{ PRIME_LINK_REL }}';{% endif %}
-			{% if PRIME_LINK_CLASS and PRIME_LINK_PAGE != 'member_post' %}links[i].className = '{{ PRIME_LINK_CLASS }}';{% endif %}
-			{% if PRIME_LINK_PREFIX %}links[i].href = '{{ PRIME_LINK_PREFIX }}' + href;{% endif %}
+			{% if PRIME_LINK_TARGET %}links[i].target = '{{ PRIME_LINK_TARGET|escape("js") }}';{% endif %}
+			{% if PRIME_LINK_REL %}links[i].rel = '{{ PRIME_LINK_REL|escape("js") }}';{% endif %}
+			{% if PRIME_LINK_CLASS and PRIME_LINK_PAGE != 'member_post' %}links[i].className = '{{ PRIME_LINK_CLASS|escape("js") }}';{% endif %}
+			{% if PRIME_LINK_PREFIX %}links[i].href = '{{ PRIME_LINK_PREFIX|escape("js") }}' + href;{% endif %}
 		}
 	}
 })();

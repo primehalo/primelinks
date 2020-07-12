@@ -60,10 +60,10 @@ class main_module
 			$config->set('primelinks_exlink_class', $request->variable('primelinks_exlink_class', ''));
 			$config->set('primelinks_inlink_prefix', $request->variable('primelinks_inlink_prefix', ''));
 			$config->set('primelinks_exlink_prefix', $request->variable('primelinks_exlink_prefix', ''));
-			$config->set('primelinks_skip_regex', htmlspecialchars_decode($request->variable('primelinks_skip_regex', ''), ENT_COMPAT));
-			$config->set('primelinks_inlink_regex', htmlspecialchars_decode($request->variable('primelinks_inlink_regex', ''), ENT_COMPAT));
-			$config->set('primelinks_exlink_regex', htmlspecialchars_decode($request->variable('primelinks_exlink_regex', ''), ENT_COMPAT));
-			$config->set('primelinks_skip_prefix_regex', htmlspecialchars_decode($request->variable('primelinks_skip_prefix_regex', ''), ENT_COMPAT));
+			$config->set('primelinks_skip_regex', $request->variable('primelinks_skip_regex', ''));
+			$config->set('primelinks_inlink_regex', $request->variable('primelinks_inlink_regex', ''));
+			$config->set('primelinks_exlink_regex', $request->variable('primelinks_exlink_regex', ''));
+			$config->set('primelinks_skip_prefix_regex', $request->variable('primelinks_skip_prefix_regex', ''));
 			$config->set('primelinks_inlink_use_titles', $request->variable('primelinks_inlink_use_titles', false));
 
 			$log = $phpbb_container->get('log');
