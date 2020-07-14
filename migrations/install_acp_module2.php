@@ -14,7 +14,7 @@ class install_acp_module2 extends \phpbb\db\migration\migration
 {
 	static public function depends_on()
 	{
-		return array('\phpbb\viglink\migrations\install_acp_module');
+		return array('\primehalo\primelinks\migrations\install_acp_module');
 	}
 
 	public function effectively_installed()
