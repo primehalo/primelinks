@@ -288,7 +288,6 @@ class main_listener implements EventSubscriberInterface
 		{
 			// If there is no scheme, then it's probably a relative, local link
 			$scheme = substr($url, 0, strpos($url, '://'));
-			//$is_local = !$scheme || ($scheme && !in_array($scheme, array('http', 'https', 'mailto', 'ftp', 'gopher')));
 			$is_local = !$scheme || ($scheme && !preg_match('/^[a-z0-9.]{2,16}$/i', $scheme));
 		}
 
@@ -370,8 +369,7 @@ class main_listener implements EventSubscriberInterface
 		$posts_to_find		= array();	// Used when we need to find post subjects
 		$topics_to_find		= array();	// Used when we need to find topic titles
 		$forums_to_find		= array();	// Used when we need to find forum names
-		$searches			= array();
-		$replacements		= array();
+		$replace			= array();
 
 		$this->user->add_lang_ext('primehalo/primelinks', 'common');
 		preg_match_all('#(<a\s[^>]+?>)(.*?)(</a>)#i', $message, $matches, PREG_SET_ORDER);
@@ -429,8 +427,7 @@ class main_listener implements EventSubscriberInterface
 					{
 						$new_link = $this->insert_attribute('href', $this->config['primelinks_forbidden_new_url'], $new_link, true) . $new_text . $linkbd['close'];
 					}
-					$searches[]		= $linkbd['full'];
-					$replacements[]	= $new_link;
+					$replace[$linkbd['full']] = $new_link;
 					continue;
 				}
 				$is_local = $this->is_url_local($href);
@@ -471,7 +468,7 @@ class main_listener implements EventSubscriberInterface
 			$is_guest = empty($this->user->data['is_registered']);
 			if ($new_target === false || ($is_guest && $this->config['primelinks_exlink_guest_hide'] && !$is_local) || ($is_guest && $this->config['primelinks_inlink_guest_hide'] && $is_local))
 			{
-				$new_text = $linkbd['text']; //$new_text = substr($linkbd['text'], 0, -4);
+				$new_text = $linkbd['text'];
 				if ($is_guest)
 				{
 					$new_text = (($this->config['primelinks_inlink_guest_hide'] == self::GUEST_HIDE_MSG) && $is_local) ? $this->user->lang['PRIMELINKS_INLINK_GUEST_MSG'] : $new_text;
@@ -503,13 +500,13 @@ class main_listener implements EventSubscriberInterface
 					{
 						$post_id = (int) $url_params['p'];
 						$posts_to_find[$post_id] = $post_id;
-						$use_titles_arr[count($replacements)] = array('open' => $new_link, 'close' => $linkbd['close'], 'old_link' => $link . $linkbd['text'] . $linkbd['close'], 'post_id' => $post_id);
+						$use_titles_arr[$link . $linkbd['text'] . $linkbd['close']] = array('open' => $new_link, 'close' => $linkbd['close'], 'post_id' => $post_id);
 					}
 					else if (!empty($url_params['t']))
 					{
 						$topic_id = (int) $url_params['t'];
 						$topics_to_find[$topic_id] = $topic_id;
-						$use_titles_arr[count($replacements)] = array('open' => $new_link, 'close' => $linkbd['close'], 'old_link' => $link . $linkbd['text'] . $linkbd['close'], 'topic_id' => $topic_id);
+						$use_titles_arr[$link . $linkbd['text'] . $linkbd['close']] = array('open' => $new_link, 'close' => $linkbd['close'], 'topic_id' => $topic_id);
 					}
 				}
 				else if (strpos($href, "{$board_path}/viewforum.{$this->php_ext}") !== false || strpos($href, "./viewforum.{$this->php_ext}") === 0 || strpos($href, "viewforum.{$this->php_ext}") === 0)
@@ -519,12 +516,11 @@ class main_listener implements EventSubscriberInterface
 					{
 						$forum_id = (int) $url_params['f'];
 						$forums_to_find[$forum_id] = $forum_id;
-						$use_titles_arr[count($replacements)] = array('open' => $new_link, 'close' => $linkbd['close'], 'old_link' => $link . $linkbd['text'] . $linkbd['close'], 'forum_id' => $forum_id);
+						$use_titles_arr[$link . $linkbd['text'] . $linkbd['close']] = array('open' => $new_link, 'close' => $linkbd['close'], 'forum_id' => $forum_id);
 					}
 				}
 			}
-			$searches[]		= $link;
-			$replacements[]	= $new_link;
+			$replace[$link] = $new_link;
 		} // end foreach of all matched links
 
 		// Make sure we're not looking up information we already have cached
@@ -568,7 +564,7 @@ class main_listener implements EventSubscriberInterface
 		// Update the link text for links to posts, topics, and forums
 		if (!empty($use_titles_arr))
 		{
-			foreach ($use_titles_arr as $idx => $v)
+			foreach ($use_titles_arr as $key => $v)
 			{
 				$middle = null;
 				$middle = (isset($v['post_id']) && isset($this->post_subjects[$v['post_id']])) ? $this->post_subjects[$v['post_id']] : $middle;
@@ -576,16 +572,15 @@ class main_listener implements EventSubscriberInterface
 				$middle = (is_null($middle) && isset($v['forum_id']) && isset($this->forum_names[$v['forum_id']])) ? $this->forum_names[$v['forum_id']] : $middle;
 				if ($middle !== null)
 				{
-					$searches[$idx] = $v['old_link'];
-					$replacements[$idx] = $v['open'] . $middle . $v['close'];
+					$replace[$key] = $v['open'] . $middle . $v['close'];
 				}
 			}
 		}
 
 		// Replace the original links with our updated links
-		if (isset($searches) && isset($replacements))
+		if (!empty($replace))
 		{
-			$message = str_replace($searches, $replacements, $message);
+			$message = strtr($message, $replace);
 		}
 		return($message);
 	}

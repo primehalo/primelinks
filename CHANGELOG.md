@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.1.11] - 2020-08-24
 ### Changed
 - Moved the SQL queries for retrieving post subjects, topic titles, and forum names from inside the main loop to outside the main loop. This should result in better perfomance for pages with posts containing a lot of those links, when that option is enabled.
+- Use strtr instead of str_replace
 
 ## [1.1.10] - 2020-07-14
 ### Fixed
