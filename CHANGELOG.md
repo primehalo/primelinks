@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.11] - 2020-08-24
+### Changed
+- Moved the SQL queries for retrieving post subjects, topic titles, and forum names from inside the main loop to outside the main loop. This should result in better perfomance for pages with posts containing a lot of those links, when that option is enabled.
+
 ## [1.1.10] - 2020-07-14
 ### Fixed
 - Typo in the new install_acp_module2.php file that would prevent installation

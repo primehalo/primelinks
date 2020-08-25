@@ -37,10 +37,10 @@ class main_listener implements EventSubscriberInterface
 	/**
 	* Variables
 	*/
-	protected $post_cache;	// @var array cached post subjects
-	protected $topic_cache;	// @var array cached topic titles
-	protected $forum_cache;	// @var array cached forum names
-	protected $site_url;	// @var string phpBB site path (without the path to phpBB)
+	protected $post_subjects = array();	// @var array cached post subjects
+	protected $topic_titles = array();	// @var array cached topic titles
+	protected $forum_names = array();	// @var array cached forum names
+	protected $site_url;				// @var string phpBB site path (without the path to phpBB)
 
 	/**
 	* Service Containers
@@ -366,6 +366,12 @@ class main_listener implements EventSubscriberInterface
 		$inlink_regex		= htmlspecialchars_decode($this->config['primelinks_inlink_regex'], ENT_COMPAT);
 		$exlink_regex		= htmlspecialchars_decode($this->config['primelinks_exlink_regex'], ENT_COMPAT);
 		$skip_prefix_regex	= htmlspecialchars_decode($this->config['primelinks_skip_prefix_regex'], ENT_COMPAT);
+		$use_titles_arr		= array();	// Used when replacing post, topic, and forum link text with their associated subject, title, or name
+		$posts_to_find		= array();	// Used when we need to find post subjects
+		$topics_to_find		= array();	// Used when we need to find topic titles
+		$forums_to_find		= array();	// Used when we need to find forum names
+		$searches			= array();
+		$replacements		= array();
 
 		$this->user->add_lang_ext('primehalo/primelinks', 'common');
 		preg_match_all('#(<a\s[^>]+?>)(.*?)(</a>)#i', $message, $matches, PREG_SET_ORDER);
@@ -486,7 +492,7 @@ class main_listener implements EventSubscriberInterface
 				$new_link = str_replace('href="', 'href="' . $url_prefix, $new_link);
 			}
 
-			// Check to see if we should replace a local topic/post link text with the topic/post title instead
+			// Check to see if we should replace a local forum/topic/post link text with the forum/topic/post title instead
 			$board_path = !isset($board_path) ? generate_board_url() : $board_path;
 			if ($this->config['primelinks_inlink_use_titles'] && $is_local && empty($removed) && !empty($linkbd['text']) && strpos($href, str_replace('&amp;', '&', $linkbd['text'])) !== false) // Link is local and still exists and the link text contains a segment of the link URL
 			{
@@ -496,36 +502,14 @@ class main_listener implements EventSubscriberInterface
 					if (!empty($url_params['p']))
 					{
 						$post_id = (int) $url_params['p'];
-						if (!isset($this->post_cache[$post_id]))
-						{
-							$sql = 'SELECT post_subject FROM ' . POSTS_TABLE . ' WHERE post_id = ' . (int) $post_id;
-							$result = $this->db->sql_query($sql);
-							$row = $this->db->sql_fetchrow($result);
-							$this->db->sql_freeresult($result);
-							$this->post_cache[$post_id] = $row['post_subject'];
-						}
-						if (!empty($this->post_cache[$post_id]))
-						{
-							$link .= $linkbd['text'] . $linkbd['close'];
-							$new_link .= $this->post_cache[$post_id] . $linkbd['close'];
-						}
+						$posts_to_find[$post_id] = $post_id;
+						$use_titles_arr[count($replacements)] = array('open' => $new_link, 'close' => $linkbd['close'], 'old_link' => $link . $linkbd['text'] . $linkbd['close'], 'post_id' => $post_id);
 					}
 					else if (!empty($url_params['t']))
 					{
 						$topic_id = (int) $url_params['t'];
-						if (!isset($this->topic_cache[$topic_id]))
-						{
-							$sql = 'SELECT topic_title FROM ' . TOPICS_TABLE . ' WHERE topic_id = ' . (int) $topic_id;
-							$result = $this->db->sql_query($sql);
-							$row = $this->db->sql_fetchrow($result);
-							$this->db->sql_freeresult($result);
-							$this->topic_cache[$topic_id] = $row['topic_title'];
-						}
-						if (!empty($this->topic_cache[$topic_id]))
-						{
-							$link .= $linkbd['text'] . $linkbd['close'];
-							$new_link .= $this->topic_cache[$topic_id] . $linkbd['close'];
-						}
+						$topics_to_find[$topic_id] = $topic_id;
+						$use_titles_arr[count($replacements)] = array('open' => $new_link, 'close' => $linkbd['close'], 'old_link' => $link . $linkbd['text'] . $linkbd['close'], 'topic_id' => $topic_id);
 					}
 				}
 				else if (strpos($href, "{$board_path}/viewforum.{$this->php_ext}") !== false || strpos($href, "./viewforum.{$this->php_ext}") === 0 || strpos($href, "viewforum.{$this->php_ext}") === 0)
@@ -534,25 +518,71 @@ class main_listener implements EventSubscriberInterface
 					if (!empty($url_params['f']))
 					{
 						$forum_id = (int) $url_params['f'];
-						if (!isset($this->forum_cache[$forum_id]))
-						{
-							$sql = 'SELECT forum_name FROM ' . FORUMS_TABLE . ' WHERE forum_id = ' . (int) $forum_id;
-							$result = $this->db->sql_query($sql);
-							$row = $this->db->sql_fetchrow($result);
-							$this->db->sql_freeresult($result);
-							$this->forum_cache[$forum_id] = $row['forum_name'];
-						}
-						if (!empty($this->forum_cache[$forum_id]))
-						{
-							$link .= $linkbd['text'] . $linkbd['close'];
-							$new_link .= $this->forum_cache[$forum_id] . $linkbd['close'];
-						}
+						$forums_to_find[$forum_id] = $forum_id;
+						$use_titles_arr[count($replacements)] = array('open' => $new_link, 'close' => $linkbd['close'], 'old_link' => $link . $linkbd['text'] . $linkbd['close'], 'forum_id' => $forum_id);
 					}
 				}
 			}
 			$searches[]		= $link;
 			$replacements[]	= $new_link;
+		} // end foreach of all matched links
+
+		// Make sure we're not looking up information we already have cached
+		$posts_to_find	= array_diff_key($posts_to_find, $this->post_subjects);
+		$topics_to_find	= array_diff_key($topics_to_find, $this->topic_titles);
+		$forums_to_find	= array_diff_key($forums_to_find, $this->forum_names);
+
+		// Find post subjects
+		if (!empty($posts_to_find))
+		{
+			$sql = 'SELECT post_id, post_subject FROM ' . POSTS_TABLE . ' WHERE ' . $this->db->sql_in_set('post_id', $posts_to_find);
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->post_subjects[$row['post_id']] = $row['post_subject'];
+			}
 		}
+
+		// Find topic titles
+		if (!empty($topics_to_find))
+		{
+			$sql = 'SELECT topic_id, topic_title FROM ' . TOPICS_TABLE . ' WHERE ' . $this->db->sql_in_set('topic_id', $topics_to_find);
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->topic_titles[$row['topic_id']] = $row['topic_title'];
+			}
+		}
+
+		// Find forum names
+		if (!empty($forums_to_find))
+		{
+			$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE . ' WHERE ' . $this->db->sql_in_set('forum_id', $forums_to_find);
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->forum_names[$row['forum_id']] = $row['forum_name'];
+			}
+		}
+
+		// Update the link text for links to posts, topics, and forums
+		if (!empty($use_titles_arr))
+		{
+			foreach ($use_titles_arr as $idx => $v)
+			{
+				$middle = null;
+				$middle = (isset($v['post_id']) && isset($this->post_subjects[$v['post_id']])) ? $this->post_subjects[$v['post_id']] : $middle;
+				$middle = (is_null($middle) && isset($v['topic_id']) && isset($this->topic_titles[$v['topic_id']])) ? $this->topic_titles[$v['topic_id']] : $middle;
+				$middle = (is_null($middle) && isset($v['forum_id']) && isset($this->forum_names[$v['forum_id']])) ? $this->forum_names[$v['forum_id']] : $middle;
+				if ($middle !== null)
+				{
+					$searches[$idx] = $v['old_link'];
+					$replacements[$idx] = $v['open'] . $middle . $v['close'];
+				}
+			}
+		}
+
+		// Replace the original links with our updated links
 		if (isset($searches) && isset($replacements))
 		{
 			$message = str_replace($searches, $replacements, $message);
