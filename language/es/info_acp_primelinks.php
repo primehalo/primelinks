@@ -119,6 +119,6 @@ $lang = array_merge($lang, array(
 	'ACP_PRIMELINKS_SKIP_PREFIX_REGEX_EXPLAIN'	=> 'Las URL que coincidan con esta expresión regular no tendrán el prefijo de enlace aplicado.',
 	'ACP_PRIMELINKS_SKIP_PREFIX_REGEX_EXAMPLE'	=> '<samp>/^www\.absoluteanime\.com)/</samp>',
 
-	'ACP_PRIMELINKS_INLINK_USE_TITLES'			=> 'Show titles instead of URLs',
-	'ACP_PRIMELINKS_INLINK_USE_TITLES_EXPLAIN'	=> 'Display the post subject, topic title, or forum name instead of the URL (e.g. changes <strong>viewtopic.php?t=1</strong> to <strong>My Topic</strong>).',
+	'ACP_PRIMELINKS_INLINK_USE_TITLES'			=> 'Mostrar títulos en lugar de la URL',
+	'ACP_PRIMELINKS_INLINK_USE_TITLES_EXPLAIN'	=> 'Muestra el asunto del mensaje, el título del tema o el nombre del foro en lugar de la URL (por ejemplo cambia <strong>viewtopic.php?t=1</strong> a <strong>Mi tema</strong>).',
 ));
